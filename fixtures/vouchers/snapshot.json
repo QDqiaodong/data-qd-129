@@ -1,0 +1,26 @@
+{
+  "min_support_count": 1,
+  "max_itemset_size": 3,
+  "min_confidence": {
+    "numerator": 1,
+    "denominator": 1
+  },
+  "baskets": [
+    {
+      "id": "basket-0",
+      "items": ["bread", "milk", "tea"]
+    },
+    {
+      "id": "basket-1",
+      "items": ["bread", "milk"]
+    },
+    {
+      "id": "basket-2",
+      "items": ["bread"]
+    },
+    {
+      "id": "basket-3",
+      "items": []
+    }
+  ]
+}

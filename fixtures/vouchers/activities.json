@@ -1,0 +1,20 @@
+[
+  {
+    "id": "meal-deal",
+    "required_items": ["bread", "milk"],
+    "quota": 2,
+    "discount_cents": 120
+  },
+  {
+    "id": "bread-off",
+    "required_items": ["bread"],
+    "quota": 1,
+    "discount_cents": 70
+  },
+  {
+    "id": "tea-off",
+    "required_items": ["tea"],
+    "quota": 3,
+    "discount_cents": 40
+  }
+]

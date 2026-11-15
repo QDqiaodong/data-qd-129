@@ -24,3 +24,8 @@ support=count(A∪B)/N，lift=confidence/(count(B)/N)，leverage=support-support
 
 `basket-rules-normalize`（按日期把商品别名折叠到规范 SKU、输出同结构快照）见
 [normalize.md](normalize.md)；它只预处理标识符，本身的评分仍由本契约的 `analyze` 完成。
+
+线下促销的优惠券预占链（`basket-rules-vouchers`，独立 SQLite 账本、固定活动目录、整数最小
+费用流精确最优、语义身份重试、取消幂等与并发线性化）见 [vouchers.md](vouchers.md)；它复用
+本契约的快照字段与 `parse_snapshot` 校验，但只作用于静态快照，不接触滚动库、挖掘报告、
+公开账本或别名图。

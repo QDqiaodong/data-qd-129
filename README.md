@@ -75,6 +75,33 @@ SHA256 与解析/折叠计数。契约、复杂度与失败边界见 [docs/norma
 .venv/bin/basket-rules --source run/normalize-jul.json --output run/normalize-jul-report.json
 ```
 
+## 线下促销优惠券预占链（第五命令，旧命令保留）
+
+线下促销运营走 `basket-rules-vouchers`：独立 SQLite 账本在 `init` 时固定**不可变活动目录**
+（≤30 活动，`{id,required_items,quota,discount_cents}`，所需商品 1..12 不重复、额度 1..200、
+折扣 1..10^9），只消费完整静态购物篮快照并复用既有字段、商品与参数校验，不接触滚动库、
+挖掘报告、公开账本或别名图。`allocate` 对 1..200 篮求全局最优：篮含活动全部所需商品才适用、
+每篮至多一券、未取消预占不超活动额度；整数最小费用流精确最大化折扣总分，平分时按篮 ID
+排序取活动 ID/null 秩向量的字典序最小者（null 大于全部 ID），无逐篮贪心、无浮点。
+空篮、无适用活动或额度耗尽均成功提交零分空分配。
+
+账本记录请求、输入语义身份（忽略键/篮/商品排列，输出路径不入身份）、全篮分配与活动占用；
+仅得券篮占用篮 ID，跨未取消请求同一篮只能预占一次，冲突整次回滚。同 id 同身份重试逐字节
+重发原分配且不二次占额，异身份拒绝；`cancel` 只释放本请求占用且幂等，取消后同 id 回执
+cancelled、绝不复活，须用新 id 重新申请。写事务内读同一提交状态的额度与占用并共同提交，
+并发等价于某串行序下逐次求当时最优；提交后原子替换输出，失败保留旧文件、同 id 重试不重复
+扣额，提交前异常整体回滚。契约、线性化边界、求解复杂度与恢复边界见
+[docs/vouchers.md](docs/vouchers.md)。
+
+```sh
+.venv/bin/basket-rules-vouchers init --ledger run/vouch.db \
+    --activities fixtures/vouchers/activities.json
+.venv/bin/basket-rules-vouchers allocate --ledger run/vouch.db --request-id req-1 \
+    --source fixtures/vouchers/snapshot.json --output run/vouch-req-1.json
+.venv/bin/basket-rules-vouchers cancel --ledger run/vouch.db --request-id req-1 \
+    --output run/vouch-cancel-1.json
+```
+
 ## 业务与样例结果
 
 4篮中bread/milk共同2篮；双向confidence2/3、lift8/9，支持度1/2，精确分数输出。
