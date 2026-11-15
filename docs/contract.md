@@ -15,3 +15,7 @@ support=count(A∪B)/N，lift=confidence/(count(B)/N)，leverage=support-support
 
 持续修订输入的SQLite滚动窗口链（`basket-rules-roll`，版本化批、水位、恢复边界与索引策略）
 见 [rolling.md](rolling.md)；其评分、门槛与排序复用本契约，`summarize` 为两链共享实现。
+
+对外公开的加噪直方图发布链（`basket-rules-publish`，独立账本、发布额度、安全随机几何噪声、
+存档重发与恢复边界）见 [publishing.md](publishing.md)；其推导组合与规则同样复用 `summarize`，
+但只作用于加噪计数，真实计数与篮身份永不输出。

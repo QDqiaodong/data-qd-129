@@ -43,3 +43,19 @@ def save(path,report):
         os.replace(temp,dest)
     finally:
         if temp and os.path.exists(temp):os.unlink(temp)
+
+def save_bytes(path,raw):
+    """Atomically publish exact bytes (archived blob replays must be byte-identical)."""
+    dest=Path(path)
+    if dest.is_symlink():raise ValueError('output cannot be a symlink')
+    dest.parent.mkdir(parents=True,exist_ok=True);temp=None
+    try:
+        with tempfile.NamedTemporaryFile(mode='wb',dir=dest.parent,delete=False) as stream:
+            temp=stream.name;stream.write(raw);stream.flush();os.fsync(stream.fileno())
+        os.replace(temp,dest)
+    finally:
+        if temp and os.path.exists(temp):os.unlink(temp)
+
+def canonical_bytes(report):
+    """Serialization shared by first publication and the archived ledger blob."""
+    return (json.dumps(report,sort_keys=True,ensure_ascii=False,allow_nan=False,indent=2)+'\n').encode('utf-8')

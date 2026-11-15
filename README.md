@@ -43,6 +43,21 @@ JSONL 批 `{id,rev,time,items}` 按非递减水位单事务提交（版本/水�
 src/basket_rules/model.py 为业务模型，相关算法模块独立组织；common.py 提供受限JSON及报告发布，
 cli.py 衔接数据链路。fixtures 为明确自制样例，代码与样例采用MIT许可。
 
+## 公开统计发布链（第三命令，旧命令保留）
+
+对外发布走 `basket-rules-publish`：独立 SQLite 账本在 `init` 时固定滚动源库、公开商品全集
+（≤12）和正整数发布额度。`publish` 在源库同一只读事务取参数与活跃篮，生成含空篮的全部
+篮型直方图，逐格独立加 `Z=G1-G2`（`P(G=k)=2^(-k-1)`，系统安全随机源，截负为0），
+仅输出加噪直方图及由其推导的篮数、至多3项组合与原精确规则，不泄露真实计数或身份。
+新 id 在账本事务内存完整报告字节并扣一次额度后才发布；旧 id 逐字节重发存档、可换输出路径、
+不读源不重抽不扣额。契约、并发与崩溃恢复边界见 [docs/publishing.md](docs/publishing.md)。
+
+```sh
+.venv/bin/basket-rules-publish init --ledger run/pub.db --source run/roll.db \
+    --universe run/universe.json --quota 5
+.venv/bin/basket-rules-publish publish --ledger run/pub.db --request-id req-1 --output run/pub-1.json
+```
+
 ## 业务与样例结果
 
 4篮中bread/milk共同2篮；双向confidence2/3、lift8/9，支持度1/2，精确分数输出。

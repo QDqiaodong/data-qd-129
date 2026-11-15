@@ -10,5 +10,6 @@ dependencies = []
 [project.scripts]
 basket-rules = "basket_rules.cli:main"
 basket-rules-roll = "basket_rules.rollcli:main"
+basket-rules-publish = "basket_rules.pubcli:main"
 [tool.setuptools.packages.find]
 where = ["src"]
