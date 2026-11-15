@@ -12,6 +12,8 @@ support=count(A∪B)/N，lift=confidence/(count(B)/N)，leverage=support-support
 样例4篮，bread/milk各3篮、共同2篮，support1/2，双向confidence2/3、lift8/9、leverage-1/16。
 规则排序确定；输入篮/商品排列不影响结果。输出全部规则，不将lift大于1解释为因果或推荐收益。
 当前无SKU别名、购物数量、序列规则、FP-growth大规模优化、统计显著性或线上推荐服务。
+商品标识不一致时用前置的 `basket-rules-normalize` 按日期归一后仍由本命令挖掘,
+见 [normalize.md](normalize.md);本命令本身不解析别名。
 
 持续修订输入的SQLite滚动窗口链（`basket-rules-roll`，版本化批、水位、恢复边界与索引策略）
 见 [rolling.md](rolling.md)；其评分、门槛与排序复用本契约，`summarize` 为两链共享实现。
@@ -19,3 +21,6 @@ support=count(A∪B)/N，lift=confidence/(count(B)/N)，leverage=support-support
 对外公开的加噪直方图发布链（`basket-rules-publish`，独立账本、发布额度、安全随机几何噪声、
 存档重发与恢复边界）见 [publishing.md](publishing.md)；其推导组合与规则同样复用 `summarize`，
 但只作用于加噪计数，真实计数与篮身份永不输出。
+
+`basket-rules-normalize`（按日期把商品别名折叠到规范 SKU、输出同结构快照）见
+[normalize.md](normalize.md)；它只预处理标识符，本身的评分仍由本契约的 `analyze` 完成。

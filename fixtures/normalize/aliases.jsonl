@@ -1,0 +1,4 @@
+{"alias": "ap", "target": "apple", "valid_from": "2026-01-01", "valid_to": "2026-07-01"}
+{"alias": "ap", "target": "pear", "valid_from": "2026-07-01", "valid_to": null}
+{"alias": "ap2", "target": "ap", "valid_from": "2026-01-01", "valid_to": null}
+{"alias": "mlk", "target": "milk", "valid_from": "2026-01-01", "valid_to": null}

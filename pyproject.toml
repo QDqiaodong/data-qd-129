@@ -11,5 +11,6 @@ dependencies = []
 basket-rules = "basket_rules.cli:main"
 basket-rules-roll = "basket_rules.rollcli:main"
 basket-rules-publish = "basket_rules.pubcli:main"
+basket-rules-normalize = "basket_rules.normcli:main"
 [tool.setuptools.packages.find]
 where = ["src"]

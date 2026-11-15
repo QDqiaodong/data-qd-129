@@ -58,6 +58,23 @@ cli.py 衔接数据链路。fixtures 为明确自制样例，代码与样例采�
 .venv/bin/basket-rules-publish publish --ledger run/pub.db --request-id req-1 --output run/pub-1.json
 ```
 
+## 商品别名归一链（新命令，旧命令保留）
+
+输入商品标识不一致时先走 `basket-rules-normalize`：按 `--as-of YYYY-MM-DD` 只取当日生效的
+别名映射，把既有快照的篮内 ID 沿链解析到规范 SKU，输出与 `basket-rules --source` **同结构**的
+快照。映射为 JSONL `{alias,target,valid_from,valid_to}`，有效期左闭右开、空止日期无期限；
+当日每个别名须恰有一条出边、不得与规范 SKU 重名、链须终止于规范 SKU，重叠/悬空/环使整次失败。
+多 ID 归一到同一 SKU 只保留一项，篮 ID、空篮与挖掘参数原样保留。别名文件 ≤64MB/50 万行，
+链解析迭代记忆化，长链不受递归深度限制。输出原子替换；stdout 回执记录日期、三份输入原字节
+SHA256 与解析/折叠计数。契约、复杂度与失败边界见 [docs/normalize.md](docs/normalize.md)。
+
+```sh
+.venv/bin/basket-rules-normalize --source fixtures/normalize/input.json \
+    --canonical fixtures/normalize/canonical.json --aliases fixtures/normalize/aliases.jsonl \
+    --as-of 2026-07-01 --output run/normalize-jul.json
+.venv/bin/basket-rules --source run/normalize-jul.json --output run/normalize-jul-report.json
+```
+
 ## 业务与样例结果
 
 4篮中bread/milk共同2篮；双向confidence2/3、lift8/9，支持度1/2，精确分数输出。
