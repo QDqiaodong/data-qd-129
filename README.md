@@ -24,6 +24,22 @@ python3 -m venv .venv
 输入和输出不得相同，输出符号链接拒绝。单操作者批处理，不承诺并发发布或断电恢复。
 同输入重跑不累加。测试使用临时目录，运行产物在忽略的run/。
 
+## 滚动窗口统计链（新命令，旧命令保留）
+
+持续修订的购物篮走 `basket-rules-roll`：SQLite 库存固定窗口秒数与原挖掘参数，
+JSONL 批 `{id,rev,time,items}` 按非递减水位单事务提交（版本/水位/篮状态/组合计数），
+低版本忽略、同版本同内容幂等、同版本不同内容整批失败；`items=null` 删除，高版本可改
+商品、时间或恢复。仅 `w-window<time<=w` 的最新非删除篮参与，空篮计分母，活跃上限10万篮。
+报告只读持久组合计数，沿用精确分数、门槛与排序；无活跃篮输出空列表。
+契约、索引策略与恢复边界见 [docs/rolling.md](docs/rolling.md)。
+
+```sh
+.venv/bin/basket-rules-roll init --db run/roll.db --window-seconds 100 \
+    --min-support-count 2 --max-itemset-size 3 --min-confidence 1 2
+.venv/bin/basket-rules-roll load --db run/roll.db --watermark 1000 --source run/batch.jsonl
+.venv/bin/basket-rules-roll report --db run/roll.db --output run/rolling-report.json
+```
+
 src/basket_rules/model.py 为业务模型，相关算法模块独立组织；common.py 提供受限JSON及报告发布，
 cli.py 衔接数据链路。fixtures 为明确自制样例，代码与样例采用MIT许可。
 

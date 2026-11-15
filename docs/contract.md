@@ -12,3 +12,6 @@ support=count(A∪B)/N，lift=confidence/(count(B)/N)，leverage=support-support
 样例4篮，bread/milk各3篮、共同2篮，support1/2，双向confidence2/3、lift8/9、leverage-1/16。
 规则排序确定；输入篮/商品排列不影响结果。输出全部规则，不将lift大于1解释为因果或推荐收益。
 当前无SKU别名、购物数量、序列规则、FP-growth大规模优化、统计显著性或线上推荐服务。
+
+持续修订输入的SQLite滚动窗口链（`basket-rules-roll`，版本化批、水位、恢复边界与索引策略）
+见 [rolling.md](rolling.md)；其评分、门槛与排序复用本契约，`summarize` 为两链共享实现。
